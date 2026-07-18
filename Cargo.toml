@@ -1,0 +1,15 @@
+[package]
+name = "obsidian_vault"
+version = "0.3.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Experimental educational vault with a bespoke versioned V3 SIV cipher"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[dependencies]
+getrandom = "=0.4.3"
+zeroize = "=1.9.0"
+
+[target.'cfg(unix)'.dependencies]
+libc = "=0.2.186"
