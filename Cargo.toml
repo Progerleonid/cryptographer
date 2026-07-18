@@ -13,3 +13,7 @@ zeroize = "=1.9.0"
 
 [target.'cfg(unix)'.dependencies]
 libc = "=0.2.186"
+
+[[bench]]
+name = "permutation"
+harness = false
