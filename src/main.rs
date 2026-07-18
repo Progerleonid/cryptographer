@@ -29,6 +29,37 @@ fn read_line(prompt: &str) -> Result<Option<String>, VaultError> {
     Ok(Some(line))
 }
 
+fn read_multiline(prompt: &str) -> Result<Option<String>, VaultError> {
+    println!("{prompt}");
+    println!("Для завершения введите точку на отдельной строке:");
+    io::stdout().flush().map_err(|_| VaultError::Io)?;
+
+    let mut text = String::new();
+    loop {
+        let mut line = String::new();
+        let count = io::stdin()
+            .read_line(&mut line)
+            .map_err(|_| VaultError::Io)?;
+        if count == 0 {
+            return if text.is_empty() {
+                Ok(None)
+            } else {
+                Ok(Some(text))
+            };
+        }
+
+        let line_without_ending = line.trim_end_matches(['\r', '\n']);
+        if line_without_ending == "." {
+            break;
+        }
+        if !text.is_empty() {
+            text.push('\n');
+        }
+        text.push_str(line_without_ending);
+    }
+    Ok(Some(text))
+}
+
 fn create_key_action() -> Result<(), VaultError> {
     let Some(path) = read_line("Путь для нового файла ключа: ")? else {
         return Ok(());
@@ -39,7 +70,7 @@ fn create_key_action() -> Result<(), VaultError> {
 }
 
 fn encrypt_action() -> Result<(), VaultError> {
-    let Some(mut text) = read_line("Введите текст: ")? else {
+    let Some(mut text) = read_multiline("Введите текст")? else {
         return Ok(());
     };
     let Some(path) = read_line("Путь к файлу ключа: ")? else {
